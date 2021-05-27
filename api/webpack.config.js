@@ -1,3 +1,4 @@
+
 const path = require("path");
 const slsw = require("serverless-webpack");
 const nodeExternals = require("webpack-node-externals");
@@ -7,6 +8,8 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 This line is only required if you are specifying `TS_NODE_PROJECT` for whatever reason.
  */
 // delete process.env.TS_NODE_PROJECT;
+
+const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
   context: __dirname,
@@ -53,5 +56,12 @@ module.exports = {
       },
     ],
   },
-  plugins: [],
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "migrations/**/*" },
+        { from: "database.json" },
+      ],
+    })
+  ],
 };

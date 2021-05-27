@@ -15,16 +15,22 @@ type ValidatedEventAPIGatewayProxyEvent<S> = Handler<ValidatedAPIGatewayProxyEve
 
 const migrate: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async () => {
   const dbmigrate = DBMigrate.getInstance(true);
-  console.log("2")
-  console.log(dbmigrate)
 
-  return dbmigrate.reset()
+  return dbmigrate.registerAPIHook()
     .then(() => {
-        return dbmigrate.up()
-          .then(() => true)
-          .catch(() => false)
-      }
-    ).catch(() => false);
+      return dbmigrate.up()
+        .then(() => true)
+        .catch(() => false)
+    })
+    .catch(() => false);
+
+  // return dbmigrate
+  //   .then(() => {
+  //       return dbmigrate.up()
+  //         .then(() => true)
+  //         .catch(() => false)
+  //     }
+  //   ).catch(() => false);
 }
 
 export const handler = middy(migrate).use(middyJsonBodyParser())

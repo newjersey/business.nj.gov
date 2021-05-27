@@ -5,7 +5,4 @@ export default (databaseUrl: string) => ({
   environment: {
     DATABASE_URL: databaseUrl
   },
-  package: {
-    include: ['migrations']
-  }
 });
