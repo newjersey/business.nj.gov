@@ -197,6 +197,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
           AMPLIFY_ENV: dev
+          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_STAGING }}
 
   deploy-staging:
     runs-on: ubuntu-latest
@@ -274,3 +275,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
           AMPLIFY_ENV: staging
+          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_STAGING }}
