@@ -60,7 +60,7 @@ jobs:
           java-version: 13
 
       - name: 🧰 Install Serverless & Amplify
-        run: npm install -g serverless amplify
+        run: npm install -g serverless @aws-amplify/cli
 
       - name: 🔧 Configure Amplify
         run: ./scripts/amplify-ci/configure.sh
@@ -152,7 +152,7 @@ jobs:
           node-version: 14.x
 
       - name: 🧰 Install Serverless & Amplify
-        run: npm install -g serverless amplify
+        run: npm install -g serverless @aws-amplify/cli
 
       - name: 🔧 Configure Amplify
         run: ./scripts/amplify-ci/configure.sh
@@ -241,7 +241,7 @@ jobs:
 #          AWS_REGION: us-east-1
 
       - name: 🧰 Install Serverless & Amplify
-        run: npm install -g serverless amplify
+        run: npm install -g serverless @aws-amplify/cli
 
       - name: 🔧 Configure Amplify
         run: ./scripts/amplify-ci/configure.sh
