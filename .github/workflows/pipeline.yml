@@ -3,7 +3,7 @@ name: Pipeline
 on:
   push:
     branches:
-      - main
+      - amplify-pipeline-update
 
 jobs:
   build-and-test:
@@ -30,7 +30,7 @@ jobs:
       - name: 📦 Tar files
         run: tar -cvf source-${{ github.sha }}.tar .
 
-      - name: 📬 Caching`
+      - name: 📬 Caching
         uses: actions/cache@v2
         with:
           path: |
@@ -43,24 +43,32 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: 🔧 Configure Amplify
-        uses: ambientlight/amplify-cli-action@0.2.1
-        with:
-          amplify_command: configure
-          amplify_env: dev
-          amplify_cli_version: "4.41.2"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
-          AWS_REGION: us-east-1
+#      - name: 🔧 Configure Amplify
+#        uses: ambientlight/amplify-cli-action@0.2.1
+#        with:
+#          amplify_command: configure
+#          amplify_env: dev
+#          amplify_cli_version: "4.41.2"
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
+#          AWS_REGION: us-east-1
 
       - name: 🔧 Set up JDK for dynamodb-local
         uses: actions/setup-java@v1
         with:
           java-version: 13
 
-      - name: 🧰 Install Serverless Framework
-        run: npm install -g serverless
+      - name: 🧰 Install Serverless & Amplify
+        run: npm install -g serverless amplify
+
+      - name: 🔧 Configure Amplify
+        run: ./scripts/amplify-ci/configure.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
+          AWS_REGION: us-east-1
+          AMPLIFY_ENV: dev
 
       - name: 🔧 Serverless Authentication
         run: sls config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
@@ -143,19 +151,16 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: 🧰 Install Serverless & Amplify
+        run: npm install -g serverless amplify
+
       - name: 🔧 Configure Amplify
-        uses: ambientlight/amplify-cli-action@0.2.1
-        with:
-          amplify_command: configure
-          amplify_env: dev
-          amplify_cli_version: "4.41.2"
+        run: ./scripts/amplify-ci/configure.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
-
-      - name: 🧰 Install Serverless Framework
-        run: npm install -g serverless
+          AMPLIFY_ENV: dev
 
       - name: 🔧 Serverless Authentication
         run: sls config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
@@ -187,16 +192,22 @@ jobs:
         working-directory: ./api
 
       - name: 🚀 Deploy web to AWS Amplify
-        uses: ambientlight/amplify-cli-action@0.2.1
-        with:
-          amplify_command: publish
-          amplify_env: dev
-          amplify_cli_version: "4.41.2"
+        run: ./scripts/amplify-ci/publish.sh
         env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_DEV }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
+          AMPLIFY_ENV: dev
+#        uses: ambientlight/amplify-cli-action@0.2.1
+#        with:
+#          amplify_command: publish
+#          amplify_env: dev
+#          amplify_cli_version: "4.41.2"
+#        env:
+#          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_DEV }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
+#          AWS_REGION: us-east-1
 
   deploy-staging:
     runs-on: ubuntu-latest
@@ -218,19 +229,27 @@ jobs:
         with:
           node-version: 14.x
 
+#      - name: 🔧 Configure Amplify
+#        uses: ambientlight/amplify-cli-action@0.2.1
+#        with:
+#          amplify_command: configure
+#          amplify_env: staging
+#          amplify_cli_version: "4.41.2"
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
+#          AWS_REGION: us-east-1
+
+      - name: 🧰 Install Serverless & Amplify
+        run: npm install -g serverless amplify
+
       - name: 🔧 Configure Amplify
-        uses: ambientlight/amplify-cli-action@0.2.1
-        with:
-          amplify_command: configure
-          amplify_env: staging
-          amplify_cli_version: "4.41.2"
+        run: ./scripts/amplify-ci/configure.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
-
-      - name: 🧰 Install Serverless Framework
-        run: npm install -g serverless
+          AMPLIFY_ENV: staging
 
       - name: 🔧 Serverless Authentication
         run: sls config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
@@ -262,13 +281,19 @@ jobs:
         working-directory: ./api
 
       - name: 🚀 Deploy web to AWS Amplify
-        uses: ambientlight/amplify-cli-action@0.2.1
-        with:
-          amplify_command: publish
-          amplify_env: staging
-          amplify_cli_version: "4.41.2"
+        run: ./scripts/amplify-ci/publish.sh
         env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_STAGING }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
           AWS_REGION: us-east-1
+          AMPLIFY_ENV: staging
+#        uses: ambientlight/amplify-cli-action@0.2.1
+#        with:
+#          amplify_command: publish
+#          amplify_env: staging
+#          amplify_cli_version: "4.41.2"
+#        env:
+#          API_BASE_URL: ${{ secrets.API_BASE_URL_AWS_STAGING }}
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_INNOV }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_INNOV }}
+#          AWS_REGION: us-east-1
