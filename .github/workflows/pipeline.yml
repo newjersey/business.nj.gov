@@ -60,7 +60,7 @@ jobs:
           AMPLIFY_ENV: dev
 
       - name: 🔧 Serverless Authentication
-        run: npm run serverless config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
+        run: npm run serverless config credentials -- --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
         working-directory: api
 
       - name: 🧰 Install web dependencies
@@ -161,7 +161,7 @@ jobs:
           AMPLIFY_ENV: dev
 
       - name: 🔧 Serverless Authentication
-        run: npm run serverless config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
+        run: npm run serverless config credentials -- --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
         working-directory: api
 
       - name: 🧰 Install web dependencies
@@ -170,7 +170,7 @@ jobs:
         run: npm --prefix=api install
 
       - name: 🚀 Deploy api with serverless
-        run: npm run serverless deploy --verbose --stage develop --region us-east-1
+        run: npm run serverless deploy -- --verbose --stage develop --region us-east-1
         working-directory: ./api
         env:
           STAGE: develop
@@ -187,7 +187,7 @@ jobs:
           USE_FAKE_LICENSE_CLIENT: ${{ secrets.USE_FAKE_LICENSE_CLIENT }}
 
       - name: 🦋 run database migrations
-        run: npm run serverless invoke -f migrate --stage develop --region us-east-1
+        run: npm run serverless invoke -- -f migrate --stage develop --region us-east-1
         working-directory: ./api
 
       - name: 🚀 Deploy web to AWS Amplify
@@ -239,7 +239,7 @@ jobs:
           AMPLIFY_ENV: staging
 
       - name: 🔧 Serverless Authentication
-        run: npm run serverless config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
+        run: npm run serverless config credentials -- --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID_INNOV}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY_INNOV}}
         working-directory: api
 
       - name: 🧰 Install web dependencies
@@ -248,7 +248,7 @@ jobs:
         run: npm --prefix=api install
 
       - name: 🚀 Deploy api with serverless
-        run: npm run serverless deploy --verbose --stage staging --region us-east-1
+        run: npm run serverless deploy -- --verbose --stage staging --region us-east-1
         working-directory: ./api
         env:
           STAGE: staging
@@ -265,7 +265,7 @@ jobs:
           USE_FAKE_LICENSE_CLIENT: ${{ secrets.USE_FAKE_LICENSE_CLIENT }}
 
       - name: 🦋 run database migrations
-        run: npm run serverless invoke -f migrate --stage staging --region us-east-1
+        run: npm run serverless invoke -- -f migrate --stage staging --region us-east-1
         working-directory: ./api
 
       - name: 🚀 Deploy web to AWS Amplify
