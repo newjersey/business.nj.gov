@@ -40,7 +40,8 @@ export const get = async <T>(url: string): Promise<T> => {
     .get(`${apiBaseUrl}/api${url}`, authHeader)
     .then((response) => response.data)
     .catch((error: AxiosError) => {
-      return Promise.reject(error.response?.status);
+      console.log(error)
+      return Promise.reject(error.response?.status || 500);
     });
 };
 

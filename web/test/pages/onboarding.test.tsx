@@ -190,6 +190,29 @@ describe("onboarding form", () => {
     expect(mockRouter.mockPush).toHaveBeenCalledWith("/roadmap");
   });
 
+  it('shows error if updating user data fails', async () => {
+    const rejectedPromise = Promise.reject()
+    mockUpdate.mockReturnValue(rejectedPromise);
+
+    subject = render(
+      <Onboarding displayContent={createEmptyOnboardingDisplayContent()} municipalities={[]} />
+    );
+
+    fillText("Business name", "Cool Computers");
+    expect(subject.queryByTestId("error-alert-UPDATE_FAILED")).not.toBeInTheDocument()
+
+    clickNext();
+    await act(() => rejectedPromise.catch(() => {}))
+
+    expect(subject.queryByTestId("error-alert-UPDATE_FAILED")).toBeInTheDocument()
+
+    const resolvedPromise = Promise.resolve()
+    mockUpdate.mockReturnValue(resolvedPromise);
+    await visitStep2()
+
+    expect(subject.queryByTestId("error-alert-UPDATE_FAILED")).not.toBeInTheDocument()
+  })
+
   it("prevents user from moving after Step 3 if you have not selected a legal structure", async () => {
     subject = render(
       <Onboarding displayContent={createEmptyOnboardingDisplayContent()} municipalities={[]} />

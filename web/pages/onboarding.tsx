@@ -26,6 +26,7 @@ import { templateEval } from "@/lib/utils/helpers";
 import { loadOnboardingDisplayContent } from "@/lib/static/loadDisplayContent";
 import { useAuthProtectedPage } from "@/lib/auth/useAuthProtectedPage";
 import { Alert } from "@/components/njwds/Alert";
+import {UserDataErrorAlert} from "@/components/UserDataErrorAlert";
 
 interface Props {
   displayContent: OnboardingDisplayContent;
@@ -69,8 +70,10 @@ const OnboardingPage = (props: Props): ReactElement => {
   const [page, setPage] = useState<{ current: number; previous: number }>({ current: 1, previous: 1 });
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(createEmptyOnboardingData());
   const [error, setError] = useState<OnboardingError | undefined>(undefined);
-  const { userData, update } = useUserData();
+  const { userData, update, ...rest } = useUserData();
   const isLargeScreen = useMediaQuery(MediaQueries.desktopAndUp);
+
+  console.log(rest.error)
 
   useEffect(() => {
     if (userData) {
@@ -125,7 +128,7 @@ const OnboardingPage = (props: Props): ReactElement => {
       await update({
         ...userData,
         onboardingData,
-      });
+      })
       const nextCurrentPage = page.current + 1;
       setPage({
         current: nextCurrentPage,
@@ -206,6 +209,7 @@ const OnboardingPage = (props: Props): ReactElement => {
                 {OnboardingErrorLookup[error]}
               </Alert>
             )}
+            <UserDataErrorAlert />
           </SingleColumnContainer>
 
           <div className="slide-container">
